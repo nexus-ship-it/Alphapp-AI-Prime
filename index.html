@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alphapp AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'primary': 'rgb(var(--color-primary) / <alpha-value>)',
+              'primary-focus': 'rgb(var(--color-primary-focus) / <alpha-value>)',
+              'primary-content': 'rgb(var(--color-primary-content) / <alpha-value>)',
+              'accent': 'rgb(var(--color-accent) / <alpha-value>)',
+              'accent-focus': 'rgb(var(--color-accent-focus) / <alpha-value>)',
+              'accent-content': 'rgb(var(--color-accent-content) / <alpha-value>)',
+              'highlight': 'rgb(var(--color-highlight) / <alpha-value>)',
+              
+              'background': 'rgb(var(--color-background) / <alpha-value>)',
+              'surface': 'rgb(var(--color-surface) / <alpha-value>)',
+              'border': 'rgb(var(--color-border) / <alpha-value>)',
+              
+              'text-primary': 'rgb(var(--color-text-primary) / <alpha-value>)',
+              'text-secondary': 'rgb(var(--color-text-secondary) / <alpha-value>)',
+              'text-tertiary': 'rgb(var(--color-text-tertiary) / <alpha-value>)',
+
+              // System Colors
+              'success': 'rgb(var(--color-success) / <alpha-value>)',
+              'error': 'rgb(var(--color-error) / <alpha-value>)',
+              'warning': 'rgb(var(--color-warning) / <alpha-value>)',
+              'info': 'rgb(var(--color-info) / <alpha-value>)',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['Fira Code', 'monospace'],
+            },
+            boxShadow: {
+              'glow-primary': '0 0 15px 5px rgba(var(--color-primary), 0.3)',
+              'glow-highlight': '0 0 15px 5px rgba(var(--color-highlight), 0.3)',
+            },
+            dropShadow: {
+               'text-glow-primary': '0 0 8px rgba(var(--color-primary), 0.6)',
+               'text-glow-highlight': '0 0 8px rgba(var(--color-highlight), 0.6)',
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-out forwards',
+              'slide-up': 'slideUp 0.5s ease-out forwards',
+              'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'toast-in': 'toastIn 0.3s ease-out forwards',
+              'toast-out': 'toastOut 0.3s ease-in forwards',
+              'progress-bar': 'progressBar linear forwards',
+              'blink': 'blink 1s step-end infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: 0 },
+                '100%': { opacity: 1 },
+              },
+              slideUp: {
+                '0%': { opacity: 0, transform: 'translateY(20px)' },
+                '100%': { opacity: 1, transform: 'translateY(0)' },
+              },
+              toastIn: {
+                '0%': { opacity: 0, transform: 'translateY(1rem) scale(0.95)' },
+                '100%': { opacity: 1, transform: 'translateY(0) scale(1)' },
+              },
+              toastOut: {
+                '0%': { opacity: 1, transform: 'translateY(0) scale(1)' },
+                '100%': { opacity: 0, transform: 'translateY(0.5rem) scale(0.95)' },
+              },
+              progressBar: {
+                '0%': { transform: 'scaleX(1)' },
+                '100%': { transform: 'scaleX(0)' },
+              },
+              blink: {
+                '0%, 100%': { opacity: 1 },
+                '50%': { opacity: 0 },
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.8.0",
+    "react-markdown": "https://esm.sh/react-markdown@9.0.1",
+    "remark-gfm": "https://esm.sh/remark-gfm@4.0.0",
+    "jszip": "https://esm.sh/jszip@3.10.1",
+    "react-syntax-highlighter": "https://esm.sh/react-syntax-highlighter@15.5.0",
+    "react-syntax-highlighter/dist/esm/styles/prism": "https://esm.sh/react-syntax-highlighter@15.5.0/dist/esm/styles/prism",
+    "react-syntax-highlighter/": "https://aistudiocdn.com/react-syntax-highlighter@^15.6.6/",
+    "react-markdown/": "https://aistudiocdn.com/react-markdown@^10.1.0/",
+    "firebase/": "https://esm.sh/firebase@^12.6.0/"
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+</script>
+<style>
+  :root, html.dark { /* Dark Theme (Default) - Refined */
+    --color-primary: 168 104 232;
+    --color-primary-focus: 151 84 218;
+    --color-primary-content: 255 255 255;
+    --color-accent: 20 184 166;
+    --color-accent-focus: 13 148 136;
+    --color-accent-content: 255 255 255;
+    --color-highlight: 34 211 238;   /* cyan-400 */
+
+    --color-background: 15 23 42;     /* slate-900 */
+    --color-surface: 30 41 59;      /* slate-800 */
+    --color-border: 71 85 105;       /* slate-600 */
+
+    --color-text-primary: 241 245 249; /* slate-100 */
+    --color-text-secondary: 148 163 184; /* slate-400 */
+    --color-text-tertiary: 100 116 139; /* slate-500 */
+
+    --color-success: 34 197 94;
+    --color-error: 239 68 68;
+    --color-warning: 245 158 11;
+    --color-info: 59 130 246;
+  }
+  html.light { /* Light Theme - Refined */
+    --color-primary: 106 13 173;
+    --color-primary-focus: 87 11 142;
+    --color-primary-content: 255 255 255;
+    --color-accent: 13 148 136;
+    --color-accent-focus: 15 118 110;
+    --color-accent-content: 255 255 255;
+    --color-highlight: 14 165 233;
+
+    --color-background: 255 255 255;    /* white */
+    --color-surface: 248 250 252; /* slate-50 */
+    --color-border: 226 232 240;    /* slate-200 */
+
+    --color-text-primary: 15 23 42;    /* slate-900 */
+    --color-text-secondary: 71 85 105;  /* slate-600 */
+    --color-text-tertiary: 100 116 139; /* slate-500 */
+
+    --color-success: 22 163 74;
+    --color-error: 220 38 38;
+    --color-warning: 202 138 4;
+    --color-info: 37 99 235;
+  }
+  html.midnight { /* Midnight Theme - Refined */
+    --color-primary: 192 132 252;      /* fuchsia-400 */
+    --color-primary-focus: 168 85 247; /* fuchsia-500 */
+    --color-primary-content: 255 255 255;
+    --color-accent: 74 222 128;       /* green-400 */
+    --color-accent-focus: 34 197 94;   /* green-500 */
+    --color-accent-content: 15 23 42;
+    --color-highlight: 132 204 22;   /* lime-500 */
+
+    --color-background: 0 0 0;          /* black */
+    --color-surface: 17 24 39;       /* gray-900 */
+    --color-border: 31 41 55;        /* gray-800 */
+
+    --color-text-primary: 229 231 235; /* gray-200 */
+    --color-text-secondary: 156 163 175; /* gray-400 */
+    --color-text-tertiary: 107 114 128; /* gray-500 */
+
+    --color-success: 34 197 94;
+    --color-error: 220 38 38;
+    --color-warning: 217 119 6;
+    --color-info: 59 130 246;
+  }
+  html.dusk { /* New Dusk Theme */
+    --color-primary: 251 146 60;      /* orange-400 */
+    --color-primary-focus: 249 115 22; /* orange-500 */
+    --color-primary-content: 255 255 255;
+    --color-accent: 251 113 133;       /* rose-400 */
+    --color-accent-focus: 244 63 94;   /* rose-500 */
+    --color-accent-content: 255 255 255;
+    --color-highlight: 252 211 77;   /* amber-300 */
+    
+    --color-background: 39 39 42;     /* zinc-800 */
+    --color-surface: 63 63 70;      /* zinc-700 */
+    --color-border: 82 82 91;       /* zinc-600 */
+    
+    --color-text-primary: 212 212 216; /* zinc-300 */
+    --color-text-secondary: 161 161 170; /* zinc-400 */
+    --color-text-tertiary: 113 113 122; /* zinc-500 */
+
+    --color-success: 74 222 128;
+    --color-error: 244 63 94;
+    --color-warning: 251 146 60;
+    --color-info: 96 165 250;
+  }
+  html.solarized { /* New Solarized Light Theme */
+    --color-primary: 38 139 210;        /* blue */
+    --color-primary-focus: 12 110 171;
+    --color-primary-content: 253 246 227;
+    --color-accent: 211 54 130;         /* magenta */
+    --color-accent-focus: 180 40 110;
+    --color-accent-content: 253 246 227;
+    --color-highlight: 42 161 152;     /* cyan */
+
+    --color-background: 253 246 227;    /* base3 */
+    --color-surface: 238 232 213;      /* base2 */
+    --color-border: 200 200 200;        /* custom gray for softer borders */
+
+    --color-text-primary: 88 110 117;     /* base01 */
+    --color-text-secondary: 131 148 150;  /* base0 */
+    --color-text-tertiary: 147 161 161;   /* base1 */
+
+    --color-success: 133 153 0;        /* green */
+    --color-error: 220 50 47;        /* red */
+    --color-warning: 181 137 0;      /* yellow */
+    --color-info: 38 139 210;        /* blue */
+  }
+
+  html {
+    background-color: rgb(var(--color-background));
+    background-size: 50px 50px, 50px 50px, auto;
+    background-attachment: fixed;
+    transition: background-color 0.3s ease;
+    height: 100%;
+  }
+  body {
+    min-height: 100%;
+  }
+  html.dark {
+    background-image:
+        linear-gradient(rgba(var(--color-primary), 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(var(--color-primary), 0.08) 1px, transparent 1px),
+        radial-gradient(ellipse at center, hsl(255, 50%, 15%) 0%, rgb(var(--color-background)) 70%);
+  }
+  html.light {
+    background-image:
+        linear-gradient(rgba(var(--color-primary), 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(var(--color-primary), 0.05) 1px, transparent 1px),
+        radial-gradient(ellipse at center, hsl(220, 80%, 98%) 0%, rgb(var(--color-background)) 80%);
+  }
+  html.midnight {
+    background-image:
+        linear-gradient(rgba(var(--color-highlight), 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(var(--color-highlight), 0.1) 1px, transparent 1px),
+        radial-gradient(ellipse at top, hsl(280, 60%, 8%) 0%, rgb(var(--color-background)) 80%);
+  }
+  html.dusk {
+      background-image:
+        linear-gradient(rgba(var(--color-primary), 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(var(--color-primary), 0.06) 1px, transparent 1px),
+        radial-gradient(ellipse at center, hsl(25, 20%, 15%) 0%, rgb(var(--color-background)) 75%);
+  }
+  html.solarized {
+    background-image:
+        linear-gradient(rgba(var(--color-text-tertiary), 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(var(--color-text-tertiary), 0.2) 1px, transparent 1px);
+  }
+
+
+  /* Custom scrollbar for a better look */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgb(var(--color-surface));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-border));
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-border) / 0.8);
+  }
+  /* Style for details/summary accordion */
+  details > summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+  details > summary::before {
+    content: '▶';
+    margin-right: 0.5rem;
+    font-size: 0.8em;
+    transition: transform 0.2s ease-in-out;
+    display: inline-block;
+  }
+  details[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>
+</head>
+  <body class="text-text-primary font-sans">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

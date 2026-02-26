@@ -1,0 +1,1 @@
+import React from 'react'; export default () => <div>CommunityHubFlow Root Placeholder</div>;
