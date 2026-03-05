@@ -3,7 +3,7 @@ import React, { useState, FormEvent, useEffect, useMemo, useCallback } from 'rea
 import { FileNode, AnalysisIssue, AnalysisCategory } from '../types';
 import DirectoryTree from './DirectoryTree';
 import { useArchitectContext } from '../contexts/ArchitectContext';
-import { TestTubeIcon, SpinnerIcon, StethoscopeIcon, ShieldCheckIcon, CopyIcon, MagicWandIcon } from './ui/icons';
+import { TestTubeIcon, SpinnerIcon, StethoscopeIcon, ShieldCheckIcon, CopyIcon, MagicWandIcon, DeployIcon } from './ui/icons';
 import { useToastContext } from '../contexts/ToastContext';
 import { useModalContext } from '../contexts/ModalContext';
 import { flattenFileTree } from '../services/fileUtils';
@@ -21,7 +21,7 @@ const ActionPanel: React.FC<{
     fixingIssueId: string | null;
 }> = React.memo(({ selectedFile, onRunReview, report, isLoading, onIssueClick, onGenerateFix, fixingIssueId }) => {
     const { t } = useI18n();
-    const { generateTestForFile } = useArchitectContext();
+    const { generateTestForFile, runSovereignAudit, generateIaC, generateFullDocs } = useArchitectContext();
 
     const handleGenerateTest = () => {
         if (selectedFile && !isLoading) {
@@ -44,64 +44,115 @@ const ActionPanel: React.FC<{
 
     return (
         <div className="bg-surface/30 border border-border/50 rounded-xl flex flex-col h-full backdrop-blur-sm shadow-xl">
-            <h3 className="text-xl font-bold text-text-primary p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-transparent">
+            <h3 className="text-xl font-bold text-text-primary p-4 border-b border-border/50 bg-gradient-to-r from-primary/10 to-transparent uppercase tracking-tighter">
                 Protocolos de Acción
             </h3>
             <div className="flex-grow overflow-y-auto p-4 space-y-8 custom-scrollbar">
                 <section>
-                    <h4 className="text-lg font-semibold text-accent mb-3 flex items-center gap-2"><TestTubeIcon className="w-5 h-5"/> {t('preview.unitTests' as any)}</h4>
+                    <h4 className="text-sm font-black text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-glow-primary"></div>
+                        Ingeniería de Pruebas
+                    </h4>
                     {!selectedFile ? (
-                        <p className="text-sm text-text-tertiary text-center py-4 italic">Selecciona un archivo para pruebas.</p>
+                        <div className="p-4 rounded-lg bg-black/20 border border-border/30 text-center">
+                            <p className="text-xs text-text-tertiary italic">Selecciona un archivo para inyectar pruebas unitarias.</p>
+                        </div>
                     ) : (
                         <button
                             onClick={handleGenerateTest}
                             disabled={isLoading}
-                            className="flex w-full items-center justify-center gap-2 px-4 py-3 bg-primary/20 text-primary font-bold rounded-lg hover:bg-primary/30 transition-all border border-primary/30"
+                            className="group relative flex w-full items-center justify-center gap-2 px-4 py-3 bg-surface/40 text-text-primary font-bold rounded-xl hover:bg-surface/60 transition-all border border-border/50 hover:border-primary/50"
                         >
-                            {isLoading ? <SpinnerIcon className="w-5 h-5 animate-spin" /> : <TestTubeIcon className="w-5 h-5"/>}
-                            {t('preview.generateTestFor' as any, { file: selectedFile.path.split('/').pop() || '' })}
+                            {isLoading ? <SpinnerIcon className="w-5 h-5 animate-spin" /> : <TestTubeIcon className="w-5 h-5 text-primary group-hover:scale-110 transition-transform"/>}
+                            <span className="text-xs uppercase tracking-tighter">Generar Test: {selectedFile.path.split('/').pop()}</span>
                         </button>
                     )}
                 </section>
 
                 <section>
-                    <h4 className="text-lg font-semibold text-primary mb-3 flex items-center gap-2"><StethoscopeIcon className="w-5 h-5"/> {t('preview.codeReview' as any)}</h4>
-                     <button
-                        onClick={onRunReview}
-                        disabled={isLoading}
-                        className="flex w-full items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary to-accent text-white font-bold rounded-lg hover:brightness-110 shadow-lg shadow-primary/20"
-                    >
-                        {isLoading ? <SpinnerIcon className="w-5 h-5 animate-spin" /> : <ShieldCheckIcon className="w-5 h-5" />}
-                        {t('preview.runFullCodeReview' as any)}
-                    </button>
-
-                    <div className="mt-4 space-y-4">
-                         {groupedIssues && (Object.keys(groupedIssues) as AnalysisCategory[]).map(category => {
-                                     const info = categoryInfo[category];
-                                     const issues = groupedIssues[category];
-                                     if (issues.length === 0) return null;
-                                     return (
-                                         <div key={category} className="animate-fade-in">
-                                            <div className="flex items-center gap-2 mb-2 px-1">
-                                                <info.icon className={`w-4 h-4 ${info.color}`} />
-                                                <span className={`text-xs font-black uppercase tracking-widest ${info.color}`}>{info.title}</span>
-                                            </div>
-                                            <div className="space-y-3">
-                                                {issues.map((issue, index) => (
-                                                    <AnalysisIssueCard 
-                                                        key={index} 
-                                                        issue={issue} 
-                                                        onCardClick={onIssueClick} 
-                                                        onGenerateFix={onGenerateFix}
-                                                        isFixing={fixingIssueId === getIssueId(issue)}
-                                                    />
-                                                ))}
-                                            </div>
-                                         </div>
-                                     )
-                                })}
+                    <h4 className="text-sm font-black text-accent uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-accent shadow-glow-accent"></div>
+                        Auditoría y Resiliencia
+                    </h4>
+                    <div className="grid grid-cols-1 gap-2">
+                        <button
+                            onClick={onRunReview}
+                            disabled={isLoading}
+                            className="flex w-full items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-primary/20 to-accent/20 text-white font-bold rounded-xl hover:from-primary/30 hover:to-accent/30 transition-all border border-primary/30"
+                        >
+                            {isLoading ? <SpinnerIcon className="w-5 h-5 animate-spin" /> : <ShieldCheckIcon className="w-5 h-5 text-primary" />}
+                            <span className="text-xs uppercase tracking-tighter">Auditoría Estándar</span>
+                        </button>
+                        <button
+                            onClick={runSovereignAudit}
+                            disabled={isLoading}
+                            className="flex w-full items-center justify-center gap-2 px-4 py-3 bg-primary text-white font-black rounded-xl hover:bg-primary-focus transition-all shadow-glow-primary"
+                        >
+                            {isLoading ? <SpinnerIcon className="w-5 h-5 animate-spin" /> : <ShieldCheckIcon className="w-5 h-5" />}
+                            <span className="text-xs uppercase tracking-tighter">Auditoría Soberana (Omni)</span>
+                        </button>
                     </div>
                 </section>
+
+                <section>
+                    <h4 className="text-sm font-black text-highlight uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-highlight shadow-glow-highlight"></div>
+                        Infraestructura y Docs
+                    </h4>
+                    <div className="grid grid-cols-1 gap-2">
+                        <button
+                            onClick={generateIaC}
+                            disabled={isLoading}
+                            className="flex w-full items-center justify-center gap-2 px-4 py-3 bg-surface/40 text-text-primary font-bold rounded-xl hover:bg-surface/60 transition-all border border-border/50"
+                        >
+                            <DeployIcon className="w-5 h-5 text-highlight" />
+                            <span className="text-xs uppercase tracking-tighter">Generar IaC (K8s/Terraform)</span>
+                        </button>
+                        <button
+                            onClick={generateFullDocs}
+                            disabled={isLoading}
+                            className="flex w-full items-center justify-center gap-2 px-4 py-3 bg-surface/40 text-text-primary font-bold rounded-xl hover:bg-surface/60 transition-all border border-border/50"
+                        >
+                            <CopyIcon className="w-5 h-5 text-accent" />
+                            <span className="text-xs uppercase tracking-tighter">Documentación Omnisciente</span>
+                        </button>
+                    </div>
+                </section>
+
+                {report && report.length > 0 && (
+                    <section className="animate-fade-in">
+                        <h4 className="text-sm font-black text-error uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-error shadow-glow-error"></div>
+                            Hallazgos del Sistema ({report.length})
+                        </h4>
+                        <div className="space-y-4">
+                            {groupedIssues && (Object.keys(groupedIssues) as AnalysisCategory[]).map(category => {
+                                const info = categoryInfo[category];
+                                const issues = groupedIssues[category];
+                                if (issues.length === 0) return null;
+                                return (
+                                    <div key={category} className="animate-fade-in">
+                                        <div className="flex items-center gap-2 mb-2 px-1">
+                                            <info.icon className={`w-4 h-4 ${info.color}`} />
+                                            <span className={`text-[10px] font-black uppercase tracking-widest ${info.color}`}>{info.title}</span>
+                                        </div>
+                                        <div className="space-y-3">
+                                            {issues.map((issue, index) => (
+                                                <AnalysisIssueCard 
+                                                    key={index} 
+                                                    issue={issue} 
+                                                    onCardClick={onIssueClick} 
+                                                    onGenerateFix={onGenerateFix}
+                                                    isFixing={fixingIssueId === getIssueId(issue)}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </section>
+                )}
             </div>
         </div>
     );

@@ -5,6 +5,11 @@ import {
     ReactIcon, VueIcon, NodeJsIcon, PythonIcon, PostgreSqlIcon, MongoDbIcon, AngularIcon, SvelteIcon, GoIcon, JavaIcon, MySqlIcon, RedisIcon, ReactNativeIcon, FlutterIcon, SwiftIcon, KotlinIcon, DockerIcon, KubernetesIcon, GitHubActionsIcon, JenkinsIcon 
 } from './ui/TechIcons';
 import { useArchitectContext } from '../contexts/ArchitectContext';
+import { 
+    PackageIcon, 
+    CodeIcon, 
+    MessageSquareIcon 
+} from './ui/icons';
 
 interface Step1BlueprintProps {
     onSubmit: (description: string, techStack: TechStack) => void;
@@ -125,69 +130,107 @@ const Step1Blueprint: React.FC<Step1BlueprintProps> = ({ onSubmit }) => {
     };
 
     return (
-        <div className="w-full max-w-7xl mx-auto text-center animate-fade-in">
-            <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-primary mb-2 drop-shadow-text-glow-primary">
-                Paso 1: Define tu Prototipo
-            </h1>
-            <p className="text-lg text-text-secondary mb-4">
-                Selecciona tu stack tecnológico y luego describe tu idea. Seré más preciso con más detalles.
-            </p>
-             <div className="mb-10">
+        <div className="w-full max-w-7xl mx-auto text-center animate-fade-in pb-20">
+            <div className="relative mb-12">
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/20 rounded-full blur-3xl -z-10"></div>
+                <h1 className="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-primary/50 mb-4 tracking-tighter uppercase drop-shadow-text-glow-primary">
+                    Arquitecto de Código
+                </h1>
+                <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-bold tracking-widest uppercase mb-4">
+                    <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                    </span>
+                    Protocolo de Diseño Soberano
+                </div>
+                <p className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
+                    Define el ADN de tu sistema. Selecciona el stack tecnológico y describe las funciones núcleo.
+                </p>
+            </div>
+
+            <div className="mb-12 flex justify-center">
                 <button 
                     type="button" 
                     onClick={loadSampleProject}
-                    className="text-primary hover:text-primary-focus font-semibold transition-colors duration-200 underline"
+                    className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-surface/40 border border-border/50 text-text-secondary hover:text-primary hover:border-primary/50 transition-all duration-300 backdrop-blur-sm"
                 >
-                    ¿No tienes una idea? Carga un proyecto de ejemplo.
+                    <PackageIcon className="w-5 h-5 group-hover:animate-bounce" />
+                    <span className="font-bold text-sm uppercase tracking-tighter">¿Sin ideas? Carga un Proyecto de Referencia</span>
                 </button>
             </div>
+
             <form onSubmit={handleSubmit} className="space-y-12">
-                
-                <section className="bg-surface/30 border border-border/50 p-6 rounded-2xl backdrop-blur-sm">
-                    <h2 className="text-3xl font-bold text-text-primary mb-8 text-center">Stack Principal (Web/Backend)</h2>
-                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 text-left">
-                        <TechSelectionGroup title="Frontend" options={techOptions.frontend} selection={techStack.frontend} onSelect={(v) => handleTechSelect('frontend', v)} selectionType="single" />
-                        <TechSelectionGroup title="Backend" options={techOptions.backend} selection={techStack.backend} onSelect={(v) => handleTechSelect('backend', v)} selectionType="single" />
-                        <TechSelectionGroup title="Base de Datos" options={techOptions.database} selection={techStack.database} onSelect={(v) => handleTechSelect('database', v)} selectionType="single" />
+                <div className="grid grid-cols-1 gap-8">
+                    <section className="relative overflow-hidden bg-surface/20 border border-border/50 p-8 rounded-3xl backdrop-blur-md group">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <CodeIcon className="w-32 h-32" />
+                        </div>
+                        <h2 className="text-2xl font-black text-text-primary mb-10 text-left uppercase tracking-tighter flex items-center gap-3">
+                            <div className="w-8 h-1 bg-primary"></div>
+                            Stack Principal y Persistencia
+                        </h2>
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 text-left">
+                            <TechSelectionGroup title="Frontend" options={techOptions.frontend} selection={techStack.frontend} onSelect={(v) => handleTechSelect('frontend', v)} selectionType="single" />
+                            <TechSelectionGroup title="Backend" options={techOptions.backend} selection={techStack.backend} onSelect={(v) => handleTechSelect('backend', v)} selectionType="single" />
+                            <TechSelectionGroup title="Base de Datos" options={techOptions.database} selection={techStack.database} onSelect={(v) => handleTechSelect('database', v)} selectionType="single" />
+                        </div>
+                    </section>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <section className="bg-surface/20 border border-border/50 p-8 rounded-3xl backdrop-blur-md">
+                            <h2 className="text-xl font-black text-text-primary mb-8 text-left uppercase tracking-tighter flex items-center gap-3">
+                                <div className="w-6 h-1 bg-accent"></div>
+                                Ecosistema Móvil
+                            </h2>
+                            <TechSelectionGroup title="" options={techOptions.mobile} selection={techStack.mobile} onSelect={(v) => handleTechSelect('mobile', v)} selectionType="single" />
+                        </section>
+                        
+                        <section className="bg-surface/20 border border-border/50 p-8 rounded-3xl backdrop-blur-md">
+                            <h2 className="text-xl font-black text-text-primary mb-8 text-left uppercase tracking-tighter flex items-center gap-3">
+                                <div className="w-6 h-1 bg-highlight"></div>
+                                Infraestructura y CI/CD
+                            </h2>
+                            <TechSelectionGroup title="" options={techOptions.devops} selection={techStack.devops} onSelect={(v) => handleTechSelect('devops', v)} selectionType="multiple" />
+                        </section>
                     </div>
-                </section>
+                </div>
 
-                <section className="bg-surface/30 border border-border/50 p-6 rounded-2xl backdrop-blur-sm">
-                    <h2 className="text-3xl font-bold text-text-primary mb-8 text-center">Plataforma Móvil (Opcional)</h2>
-                    <TechSelectionGroup title="" options={techOptions.mobile} selection={techStack.mobile} onSelect={(v) => handleTechSelect('mobile', v)} selectionType="single" />
-                </section>
-                
-                 <section className="bg-surface/30 border border-border/50 p-6 rounded-2xl backdrop-blur-sm">
-                    <h2 className="text-3xl font-bold text-text-primary mb-8 text-center">DevOps y CI/CD (Opcional)</h2>
-                    <TechSelectionGroup title="" options={techOptions.devops} selection={techStack.devops} onSelect={(v) => handleTechSelect('devops', v)} selectionType="multiple" />
-                </section>
-
-
-                <div>
-                    <h2 className="text-3xl font-bold text-text-primary mb-8 text-center">Describe tu Proyecto</h2>
-                    <div className="w-full max-w-4xl mx-auto bg-surface/80 border-2 border-border/50 rounded-lg backdrop-blur-sm shadow-inner">
-                        <div className="p-4 min-h-[120px]">
+                <section className="bg-surface/30 border border-border/50 p-8 rounded-3xl backdrop-blur-md relative overflow-hidden">
+                    <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl"></div>
+                    <h2 className="text-2xl font-black text-text-primary mb-8 text-left uppercase tracking-tighter flex items-center gap-3">
+                        <div className="w-8 h-1 bg-primary"></div>
+                        Especificaciones del Sistema
+                    </h2>
+                    
+                    <div className="w-full max-w-5xl mx-auto bg-black/40 border border-border/50 rounded-2xl overflow-hidden shadow-2xl">
+                        <div className="p-6 min-h-[160px] max-h-[400px] overflow-y-auto custom-scrollbar">
                             {features.length === 0 ? (
-                                <p className="text-text-tertiary text-center py-8">Añade las características principales de tu proyecto.</p>
+                                <div className="flex flex-col items-center justify-center py-12 text-text-tertiary">
+                                    <MessageSquareIcon className="w-12 h-12 mb-4 opacity-20" />
+                                    <p className="text-lg font-medium italic">El manifiesto está vacío. Añade las funciones clave de tu arquitectura.</p>
+                                </div>
                             ) : (
-                                <ul className="space-y-2">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     {features.map((feature, index) => (
-                                        <li key={index} className="flex items-center justify-between bg-background/50 p-3 rounded-md animate-fade-in group">
-                                            <span className="text-text-primary">{feature}</span>
+                                        <div key={index} className="flex items-center justify-between bg-surface/50 border border-border/30 p-4 rounded-xl animate-slide-up group hover:border-primary/50 transition-all">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-2 h-2 rounded-full bg-primary shadow-glow-primary"></div>
+                                                <span className="text-text-primary font-medium">{feature}</span>
+                                            </div>
                                             <button 
                                                 type="button" 
                                                 onClick={() => handleRemoveFeature(index)}
-                                                className="w-6 h-6 flex items-center justify-center bg-transparent text-text-secondary rounded-full opacity-50 group-hover:opacity-100 group-hover:bg-error/20 group-hover:text-error transition-all"
+                                                className="p-1.5 rounded-lg text-text-tertiary hover:text-error hover:bg-error/10 transition-all opacity-0 group-hover:opacity-100"
                                                 aria-label={`Eliminar característica: ${feature}`}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             </button>
-                                        </li>
+                                        </div>
                                     ))}
-                                </ul>
+                                </div>
                             )}
                         </div>
-                        <div className="p-3 border-t border-border/50 flex gap-2">
+                        <div className="p-4 bg-surface/30 border-t border-border/50 flex gap-3">
                             <input
                                 value={currentFeature}
                                 onChange={(e) => setCurrentFeature(e.target.value)}
@@ -197,27 +240,33 @@ const Step1Blueprint: React.FC<Step1BlueprintProps> = ({ onSubmit }) => {
                                         handleAddFeature();
                                     }
                                 }}
-                                placeholder="Ej: Autenticación de usuarios con JWT"
-                                className="w-full p-2 bg-surface border border-border rounded-md text-text-primary focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                                placeholder="Ej: Implementar Microservicios con comunicación gRPC..."
+                                className="flex-grow p-3 bg-black/50 border border-border/50 rounded-xl text-text-primary placeholder:text-text-tertiary focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
                             />
                             <button 
                                 type="button" 
                                 onClick={handleAddFeature}
-                                className="px-5 py-2 bg-accent text-accent-content font-semibold rounded-lg hover:bg-accent-focus transition-colors"
+                                className="px-8 py-3 bg-primary text-white font-black rounded-xl hover:bg-primary-focus transition-all shadow-glow-primary uppercase tracking-tighter text-sm"
                             >
                                 Añadir
                             </button>
                         </div>
                     </div>
-                </div>
+                </section>
                 
-                <button
-                    type="submit"
-                    disabled={features.length === 0}
-                    className="w-full sm:w-auto px-12 py-4 bg-gradient-to-r from-primary to-accent hover:from-primary-focus hover:to-accent-focus text-primary-content font-bold text-xl rounded-lg transition-all transform hover:scale-105 duration-300 shadow-lg shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    Iniciar Diseño
-                </button>
+                <div className="pt-8">
+                    <button
+                        type="submit"
+                        disabled={features.length === 0}
+                        className="group relative inline-flex items-center justify-center px-16 py-5 font-black text-white transition-all duration-300 bg-primary rounded-2xl hover:bg-primary-focus shadow-glow-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none overflow-hidden"
+                    >
+                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                        <span className="relative flex items-center gap-3 text-xl uppercase tracking-widest">
+                            Sintetizar Arquitectura
+                            <CodeIcon className="w-6 h-6" />
+                        </span>
+                    </button>
+                </div>
             </form>
         </div>
     );

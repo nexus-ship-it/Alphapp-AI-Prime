@@ -33,7 +33,9 @@ const Message: React.FC<{ message: CommunityMessage; currentUser: CommunityUser 
                     <span className="text-[9px] text-text-tertiary">{new Date(message.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
                 </div>
                 <div className={`px-4 py-3 rounded-2xl shadow-xl border border-white/5 ${isCurrentUser ? 'bg-primary text-white rounded-tr-none' : 'bg-surface/80 text-text-primary rounded-tl-none backdrop-blur-md'}`}>
-                     <ReactMarkdown className="prose prose-invert prose-sm">{message.translatedText && !showOriginal ? message.translatedText : message.text}</ReactMarkdown>
+                     <div className="prose prose-invert prose-sm">
+                        <ReactMarkdown>{message.translatedText && !showOriginal ? message.translatedText : message.text}</ReactMarkdown>
+                     </div>
                 </div>
                 {message.translatedText && (
                     <button onClick={() => setShowOriginal(!showOriginal)} className="text-[9px] text-accent mt-1 hover:underline uppercase font-bold tracking-widest">{showOriginal ? 'Ver Traducción' : 'Ver Original'}</button>

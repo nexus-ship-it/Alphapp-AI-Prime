@@ -190,7 +190,9 @@ const WebNavigatorFlow: React.FC<WebNavigatorFlowProps> = ({ onSendToDoctor, onA
                                             {queryHistory.map((msg, i) => (
                                                 <div key={i} className={`flex items-start gap-3 mb-4 ${msg.sender === 'user' ? 'justify-end' : ''}`}>
                                                     <div className={`p-3 rounded-xl max-w-md ${msg.sender === 'user' ? 'bg-primary text-white' : 'bg-surface text-text-primary'}`}>
-                                                        <ReactMarkdown className="prose prose-invert prose-sm">{msg.text}</ReactMarkdown>
+                                                        <div className="prose prose-invert prose-sm">
+                                                            <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ))}

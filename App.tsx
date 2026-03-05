@@ -49,6 +49,8 @@ const WebNavigatorFlow = lazy(() => import('./components/WebNavigatorFlow'));
 const LiveChatFlow = lazy(() => import('./components/LiveChatFlow'));
 const GuardianFlow = lazy(() => import('./components/GuardianFlow'));
 
+const Step2Clarification = lazy(() => import('./components/Step2_Clarification'));
+
 const Stepper: React.FC<{ currentStep: number; steps: string[] }> = React.memo(({ currentStep, steps }) => (
     <nav aria-label="Progress">
         <ol role="list" className="flex items-center">
@@ -81,6 +83,7 @@ const ArchitectFlow: React.FC<{onSendToDoctor: () => void; onSendToDeployer: () 
     let stepComponent;
     switch (architectStep) {
         case 'blueprint': stepComponent = <Step1Blueprint onSubmit={submitBlueprint} />; break;
+        case 'clarification': stepComponent = <Suspense fallback={<Loader text="Sincronizando con la IA..." />}><Step2Clarification initialHistory={clarificationHistory} onSubmit={generateArchitecture} /></Suspense>; break;
         case 'preview': stepComponent = fileStructure && <Step3Preview fileStructure={fileStructure} onModificationRequest={requestModification} onApproval={() => setStep('delivery')} />; break;
         case 'delivery': stepComponent = fileStructure && projectDescription && techStack && <Step4Delivery fileStructure={fileStructure} projectDescription={projectDescription} techStack={techStack} onStartNew={resetArchitect} onSendToDoctor={onSendToDoctor} onSendToDeployer={onSendToDeployer} />; break;
     }

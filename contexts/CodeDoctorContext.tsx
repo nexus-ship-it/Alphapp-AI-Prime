@@ -18,6 +18,7 @@ interface CodeDoctorContextType {
     fileTree: FileNode | null;
     techStack: TechStack;
     analysisReport: AnalysisIssue[] | null;
+    healthScore: { overall: number; security: number; quality: number; performance: number; maintainability: number } | null;
     isLoading: boolean;
     loadingText: string;
     isDetectingStack: boolean;
@@ -38,8 +39,10 @@ interface CodeDoctorContextType {
     runAnalysis: () => Promise<void>;
     runBestPracticesAnalysis: () => Promise<void>;
     runDependencyAnalysis: () => Promise<void>;
+    runRefactoringAnalysis: () => Promise<void>;
     generateAndShowFix: (issue: AnalysisIssue) => Promise<ProposedFix | undefined>;
     applyProposedFix: () => void;
+    closeFixPreview: () => void;
     startTutorSession: (issue: AnalysisIssue) => Promise<void>;
     sendTutorMessage: (message: string) => Promise<void>;
     closeTutorSession: () => void;
@@ -59,6 +62,7 @@ export const CodeDoctorProvider: React.FC<{ children: ReactNode }> = ({ children
         frontend: 'None', backend: 'None', database: 'None', mobile: 'None', devops: []
     });
     const [analysisReport, setAnalysisReport] = useState<AnalysisIssue[] | null>(null);
+    const [healthScore, setHealthScore] = useState<{ overall: number; security: number; quality: number; performance: number; maintainability: number } | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [loadingText, setLoadingText] = useState('');
     const [isDetectingStack, setIsDetectingStack] = useState(false);
@@ -80,16 +84,18 @@ export const CodeDoctorProvider: React.FC<{ children: ReactNode }> = ({ children
     const { loadProject, projectFiles: contextProjectFiles, techStack: contextTechStack, projectName: contextProjectName, analysisReport: contextAnalysisReport, clearProject } = useProjectContext();
     const { notify } = useSettingsContext();
 
-    const runAnalysisInternal = useCallback(async (files: {path: string, content: string}[], tech: TechStack, analysisType: 'full' | 'best_practices' | 'dependencies' = 'full'): Promise<void> => {
+    const runAnalysisInternal = useCallback(async (files: {path: string, content: string}[], tech: TechStack, analysisType: 'full' | 'best_practices' | 'dependencies' | 'refactoring' = 'full'): Promise<void> => {
         setIsLoading(true);
         setError(null);
         setAnalysisReport(null);
+        setHealthScore(null);
         let report: AnalysisIssue[] = [];
 
         try {
             if (analysisType === 'full') {
                 setLoadingText('Realizando análisis profundo con IA...');
                 const analysisResult = await geminiService.generateFullCodeAnalysis(files, tech);
+                setHealthScore(analysisResult.health_score);
                 report = [
                     ...analysisResult.security.map((i: any): AnalysisIssue => ({ ...i, category: 'Seguridad' })),
                     ...analysisResult.dependencies.map((i: any): AnalysisIssue => ({ ...i, category: 'Análisis de Dependencias' })),
@@ -104,14 +110,18 @@ export const CodeDoctorProvider: React.FC<{ children: ReactNode }> = ({ children
             } else if (analysisType === 'best_practices') {
                 setLoadingText('Analizando mejores prácticas...');
                 const bestPracticeIssues = await geminiService.generateBestPracticesAnalysis(files, tech);
-                report = bestPracticeIssues.map((i): AnalysisIssue => ({ ...i, category: 'Mejores Prácticas' }));
+                report = bestPracticeIssues.map((i: any): AnalysisIssue => ({ ...i, category: 'Mejores Prácticas' }));
             } else if (analysisType === 'dependencies') {
                 setLoadingText('Auditando dependencias...');
                 const result = await geminiService.generateDependencyAnalysis(files, tech);
                 report = [
-                    ...result.dependencies.map((i): AnalysisIssue => ({ ...i, category: 'Análisis de Dependencias' })),
-                    ...result.dependency_optimization.map((i): AnalysisIssue => ({ ...i, category: 'Optimización de Dependencias' }))
+                    ...result.dependencies.map((i: any): AnalysisIssue => ({ ...i, category: 'Análisis de Dependencias' })),
+                    ...result.dependency_optimization.map((i: any): AnalysisIssue => ({ ...i, category: 'Optimización de Dependencias' }))
                 ];
+            } else if (analysisType === 'refactoring') {
+                setLoadingText('Buscando oportunidades de refactorización...');
+                const refactoringIssues = await geminiService.generateRefactoringSuggestions(files, tech);
+                report = refactoringIssues.map((i: any): AnalysisIssue => ({ ...i, category: 'Refactorización', severity: 'low' }));
             }
 
             setAnalysisReport(report);
@@ -148,6 +158,11 @@ export const CodeDoctorProvider: React.FC<{ children: ReactNode }> = ({ children
         await runAnalysisInternal(uploadedFiles, techStack, 'dependencies');
     }, [uploadedFiles, techStack, runAnalysisInternal]);
 
+    const runRefactoringAnalysis = useCallback(async (): Promise<void> => {
+        if (!uploadedFiles.length || !techStack) return;
+        await runAnalysisInternal(uploadedFiles, techStack, 'refactoring');
+    }, [uploadedFiles, techStack, runAnalysisInternal]);
+
     useEffect(() => {
         if (contextProjectFiles && contextTechStack && doctorStep === 'upload') {
             setUploadedFiles(contextProjectFiles);
@@ -178,6 +193,7 @@ export const CodeDoctorProvider: React.FC<{ children: ReactNode }> = ({ children
         setError(null);
         setAnalysisReport(null);
         setContextualSummary(null);
+        setHealthScore(null);
 
         try {
             const files = await readFilesFromUpload(fileList);
@@ -266,6 +282,10 @@ export const CodeDoctorProvider: React.FC<{ children: ReactNode }> = ({ children
         setProposedFix(null);
     }, [fileTree, proposedFix, uploadedFiles, addToast]);
 
+    const closeFixPreview = useCallback(() => {
+        setProposedFix(null);
+    }, []);
+
     const startTutorSession = useCallback(async (issue: AnalysisIssue) => {
         setIsTutorLoading(true);
         setCurrentTutorIssue(issue);
@@ -324,6 +344,7 @@ export const CodeDoctorProvider: React.FC<{ children: ReactNode }> = ({ children
         setFileTree(null);
         setTechStackState({ frontend: 'None', backend: 'None', database: 'None', mobile: 'None', devops: [] });
         setAnalysisReport(null);
+        setHealthScore(null);
         setProposedFix(null);
         setContextualSummary(null);
     }, []);
@@ -334,10 +355,10 @@ export const CodeDoctorProvider: React.FC<{ children: ReactNode }> = ({ children
     }, [uploadedFiles, techStack, projectName, analysisReport, loadProject]);
 
     const value = {
-        doctorStep, uploadedFiles, fileTree, techStack, analysisReport, isLoading, loadingText, isDetectingStack, stackWasAutoDetected,
+        doctorStep, uploadedFiles, fileTree, techStack, analysisReport, healthScore, isLoading, loadingText, isDetectingStack, stackWasAutoDetected,
         error, fixingIssueId, proposedFix, projectName, autoAnalyze, analysisContext, contextualSummary, isTutorModalOpen, isTutorLoading,
         tutorChatHistory, currentTutorIssue, setUploadedFilesAndDetectStack, handleTechSelect, runAnalysis, runBestPracticesAnalysis,
-        runDependencyAnalysis, generateAndShowFix, applyProposedFix, startTutorSession, sendTutorMessage, closeTutorSession: () => setIsTutorModalOpen(false),
+        runDependencyAnalysis, runRefactoringAnalysis, generateAndShowFix, applyProposedFix, closeFixPreview, startTutorSession, sendTutorMessage, closeTutorSession: () => setIsTutorModalOpen(false),
         resetDoctor, loadAnalysisContext, sendToDeployer, setAutoAnalyze,
     };
 

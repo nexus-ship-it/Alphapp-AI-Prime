@@ -34,6 +34,9 @@ interface ArchitectContextType {
     generateTestForFile: (filePath: string, fileContent: string) => Promise<void>;
     clearLastGeneratedTest: () => void;
     runCodeReview: () => Promise<void>;
+    runSovereignAudit: () => Promise<void>;
+    generateIaC: () => Promise<void>;
+    generateFullDocs: () => Promise<void>;
     generateFix: (issue: AnalysisIssue) => Promise<ProposedFix | undefined>;
     applyFix: (fix: ProposedFix) => void;
     loadSampleProject: () => Promise<void>;
@@ -240,6 +243,71 @@ export const ArchitectProvider: React.FC<{ children: ReactNode }> = ({ children 
             const errorMessage = e instanceof Error ? e.message : 'No se pudo completar el análisis de código.';
             setError(errorMessage);
             addToast({ type: 'error', title: 'Error de Análisis', message: errorMessage });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const runSovereignAudit = async () => {
+        if (!fileStructure || !techStack) return;
+        setIsLoading(true);
+        setLoadingText('Iniciando Auditoría Soberana (Nivel Omni)...');
+        setError(null);
+
+        try {
+            const flatFiles = flattenFileTree(fileStructure);
+            const auditResult = await geminiService.generateSovereignAudit(flatFiles, techStack);
+            
+            const report: AnalysisIssue[] = [
+                ...(auditResult.seguridad_extrema || []).map((i: any): AnalysisIssue => ({ ...i, category: 'Seguridad' })),
+                ...(auditResult.optimizacion_critica || []).map((i: any): AnalysisIssue => ({ ...i, category: 'Calidad' })),
+                ...(auditResult.resiliencia_infra || []).map((i: any): AnalysisIssue => ({ ...i, category: 'Mejores Prácticas' })),
+            ];
+            
+            setAnalysisReport(prev => [...(prev || []), ...report]);
+            addToast({ type: 'success', title: 'Auditoría Soberana Finalizada', message: 'Se han integrado protocolos de resiliencia extrema.' });
+        } catch (e) {
+            const errorMessage = e instanceof Error ? e.message : 'Fallo en la Auditoría Soberana.';
+            setError(errorMessage);
+            addToast({ type: 'error', title: 'Error Crítico', message: errorMessage });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const generateIaC = async () => {
+        if (!projectDescription || !techStack || !fileStructure) return;
+        setIsLoading(true);
+        setLoadingText('Generando Infraestructura como Código (IaC)...');
+        
+        try {
+            const iacFiles = await geminiService.generateIaCConfig(projectDescription, techStack);
+            let newTree = fileStructure;
+            for (const file of iacFiles) {
+                newTree = addFileToTree(newTree, `infra/${file.path}`, file.content);
+            }
+            setFileStructure(newTree);
+            addToast({ type: 'success', title: 'Infraestructura Lista', message: 'Se han generado manifiestos de K8s y Terraform.' });
+        } catch (e) {
+            addToast({ type: 'error', title: 'Error IaC', message: 'No se pudo generar la infraestructura.' });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const generateFullDocs = async () => {
+        if (!projectDescription || !techStack || !fileStructure) return;
+        setIsLoading(true);
+        setLoadingText('Redactando Documentación Técnica Omnisciente...');
+        
+        try {
+            const flatFiles = flattenFileTree(fileStructure);
+            const docs = await geminiService.generateDocumentation(projectDescription, techStack, flatFiles);
+            const newTree = addFileToTree(fileStructure, 'DOCS_SOBERANOS.md', docs);
+            setFileStructure(newTree);
+            addToast({ type: 'success', title: 'Documentación Generada', message: 'El manual técnico ha sido integrado en el núcleo.' });
+        } catch (e) {
+            addToast({ type: 'error', title: 'Error Docs', message: 'No se pudo generar la documentación.' });
         } finally {
             setIsLoading(false);
         }
@@ -852,6 +920,9 @@ li:hover .delete-btn {
         generateTestForFile,
         clearLastGeneratedTest,
         runCodeReview,
+        runSovereignAudit,
+        generateIaC,
+        generateFullDocs,
         setStep: setArchitectStep,
         resetArchitect,
         generateFix,

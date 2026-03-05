@@ -27,6 +27,7 @@ export const getCategoryInfo = (t: (key: TranslationKey, replacements?: Record<s
     'Infraestructura': { icon: DeployIcon, color: 'text-teal-400', title: t('analysis.category.infrastructure' as TranslationKey) },
     'Licenciamiento': { icon: PackageIcon, color: 'text-gray-400', title: t('analysis.category.licensing' as TranslationKey) },
     'Detección de Secretos': { icon: KeyIcon, color: 'text-red-500', title: t('analysis.category.secrets' as TranslationKey) },
+    'Refactorización': { icon: MagicWandIcon, color: 'text-indigo-400', title: 'Refactorización' },
 });
 
 export const AnalysisIssueCard: React.FC<{ 

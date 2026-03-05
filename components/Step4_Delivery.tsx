@@ -7,7 +7,7 @@ import { FileNode, TechStack } from '../types';
 import * as zipService from '../services/zipService';
 import * as geminiService from '../services/geminiService';
 import { useToastContext } from '../contexts/ToastContext';
-import { CopyIcon, DeployIcon, RefreshIcon, StethoscopeIcon } from './ui/icons';
+import { CopyIcon, DeployIcon, RefreshIcon, StethoscopeIcon, PackageIcon, PaletteIcon } from './ui/icons';
 import { useArchitectContext } from '../contexts/ArchitectContext';
 import { flattenFileTree, addFileToTree } from '../services/fileUtils';
 import { CodeBlock } from './ui/CodeBlock';
@@ -124,136 +124,154 @@ export const Step4Delivery: React.FC<Step4DeliveryProps> = ({ fileStructure, pro
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto text-center animate-fade-in">
-            <div className="bg-gradient-to-br from-success/20 to-surface/20 border border-success/30 p-8 rounded-2xl mb-8 backdrop-blur-sm shadow-lg shadow-success/10">
-                <h2 className="text-4xl font-bold text-green-300">¡Construcción Completa!</h2>
-                <p className="text-green-300/80 mt-2 text-lg">Tu proyecto ha sido diseñado y está listo para descargar.</p>
+        <div className="w-full max-w-5xl mx-auto text-center animate-fade-in pb-20">
+            <div className="relative mb-12">
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/20 rounded-full blur-3xl -z-10"></div>
+                <h1 className="text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-primary/50 mb-4 tracking-tighter uppercase drop-shadow-text-glow-primary">
+                    Misión Cumplida
+                </h1>
+                <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-bold tracking-widest uppercase mb-4">
+                    Arquitectura Sintetizada con Éxito
+                </div>
+                <p className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
+                    El sistema ha sido compilado y verificado. Los activos están listos para su despliegue en el entorno de producción.
+                </p>
             </div>
 
-            {/* Download Section */}
-            <div className="bg-surface/30 border border-border/50 rounded-2xl p-8 mb-8 text-left backdrop-blur-sm space-y-6">
-                 <h3 className="text-2xl font-bold text-accent mb-4 text-center">Finalizar y Entregar</h3>
-                 {/* Font Selection */}
-                 <div>
-                    <h4 className="font-semibold text-text-primary mb-2">Agregar Fuentes (Opcional)</h4>
-                    <p className="text-sm text-text-secondary mb-3">
-                        Incluye una carpeta de fuentes (.ttf, .woff2) en una carpeta `/public/fonts` dentro del .zip.
-                    </p>
-                    <input
-                        type="file"
-                        ref={fontInputRef}
-                        onChange={handleFontFolderSelect}
-                        className="hidden"
-                        {...({ webkitdirectory: "true", directory: "true" } as any)}
-                        multiple
-                    />
-                    <button
-                        onClick={triggerFontFolderSelect}
-                        className="w-full px-6 py-3 border-2 border-dashed border-border/70 text-text-secondary rounded-lg hover:border-accent hover:text-accent transition duration-300 bg-surface/50"
-                    >
-                        {fontFiles && fontFiles.length > 0 ? `${fontFiles.length} archivo(s) de fuente seleccionado(s)` : 'Seleccionar Carpeta de Fuentes'}
-                    </button>
-                 </div>
-                 {/* Download Button */}
-                 <button
-                    onClick={handleDownload}
-                    disabled={isDownloading || isGeneratingArtifacts}
-                    className="w-full px-8 py-4 bg-gradient-to-r from-primary to-accent text-white font-bold text-lg rounded-lg hover:from-primary-focus hover:to-accent-focus transition-all transform hover:scale-105 duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/30"
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+                <div className="lg:col-span-7 space-y-6">
+                    <div className="bg-surface/20 border border-border/50 rounded-3xl p-8 backdrop-blur-md text-left relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <PackageIcon className="w-32 h-32" />
+                        </div>
+                        <h3 className="text-2xl font-black text-text-primary mb-6 uppercase tracking-tighter flex items-center gap-3">
+                            <div className="w-8 h-1 bg-primary"></div>
+                            Paquete de Entrega
+                        </h3>
+                        
+                        <div className="space-y-6">
+                            <div>
+                                <h4 className="text-sm font-black text-text-tertiary uppercase tracking-widest mb-3">Activos Tipográficos</h4>
+                                <input
+                                    type="file"
+                                    ref={fontInputRef}
+                                    onChange={handleFontFolderSelect}
+                                    className="hidden"
+                                    {...({ webkitdirectory: "true", directory: "true" } as any)}
+                                    multiple
+                                />
+                                <button
+                                    onClick={triggerFontFolderSelect}
+                                    className="w-full px-6 py-4 border-2 border-dashed border-border/50 text-text-secondary rounded-2xl hover:border-primary/50 hover:text-primary transition-all duration-300 bg-black/20 flex items-center justify-center gap-3"
+                                >
+                                    <PaletteIcon className="w-5 h-5" />
+                                    <span className="font-bold text-sm uppercase tracking-tighter">
+                                        {fontFiles && fontFiles.length > 0 ? `${fontFiles.length} Fuentes Vinculadas` : 'Vincular Carpeta de Fuentes'}
+                                    </span>
+                                </button>
+                            </div>
+
+                            <button
+                                onClick={handleDownload}
+                                disabled={isDownloading || isGeneratingArtifacts}
+                                className="group relative w-full px-8 py-5 bg-primary text-white font-black text-xl rounded-2xl hover:bg-primary-focus transition-all shadow-glow-primary disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                            >
+                                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                <span className="relative flex items-center justify-center gap-3 uppercase tracking-widest">
+                                    {isDownloading ? 'Sincronizando...' : isGeneratingArtifacts ? 'Generando Núcleo...' : 'Descargar Sistema (.zip)'}
+                                    <PackageIcon className="w-6 h-6" />
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="bg-surface/20 border border-border/50 rounded-3xl p-8 backdrop-blur-md text-left">
+                        <h3 className="text-2xl font-black text-text-primary mb-6 uppercase tracking-tighter flex items-center gap-3">
+                            <div className="w-8 h-1 bg-accent"></div>
+                            Protocolos de Integración
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button
+                                onClick={handleSendToDoctor}
+                                disabled={isGeneratingArtifacts}
+                                className="flex items-center justify-center gap-3 px-6 py-4 bg-surface/40 border border-border/50 text-text-primary font-bold rounded-2xl hover:bg-surface/60 hover:border-primary/50 transition-all group"
+                            >
+                                <StethoscopeIcon className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
+                                <span className="uppercase tracking-tighter text-sm">Auditoría Doctor</span>
+                            </button>
+                            <button
+                                onClick={handleSendToDeployer}
+                                disabled={isGeneratingArtifacts}
+                                className="flex items-center justify-center gap-3 px-6 py-4 bg-surface/40 border border-border/50 text-text-primary font-bold rounded-2xl hover:bg-surface/60 hover:border-accent/50 transition-all group"
+                            >
+                                <DeployIcon className="w-6 h-6 text-accent group-hover:scale-110 transition-transform" />
+                                <span className="uppercase tracking-tighter text-sm">Despliegue Soberano</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="lg:col-span-5 space-y-6">
+                    <div className="bg-surface/20 border border-border/50 rounded-3xl p-8 backdrop-blur-md text-left h-full flex flex-col">
+                        <h3 className="text-2xl font-black text-text-primary mb-6 uppercase tracking-tighter flex items-center gap-3">
+                            <div className="w-8 h-1 bg-highlight"></div>
+                            Manifiesto del Sistema
+                        </h3>
+                        <div className="flex-grow space-y-4 overflow-y-auto custom-scrollbar pr-2">
+                            <details className="bg-black/20 border border-border/30 rounded-2xl overflow-hidden group open:border-primary/30 transition-all">
+                                <summary className="p-4 font-bold text-text-primary hover:bg-white/5 transition-colors cursor-pointer flex justify-between items-center uppercase tracking-tighter text-sm">
+                                    README.md Soberano
+                                    <span className="text-primary group-open:rotate-90 transition-transform text-xl">▸</span>
+                                </summary>
+                                <div className="p-6 border-t border-border/30 bg-black/40">
+                                    {isGeneratingArtifacts ? <div className="animate-pulse text-text-tertiary">Sincronizando...</div> : (
+                                        <article className="prose prose-invert prose-sm max-w-none prose-pre:bg-black/50">
+                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{readmeContent || ''}</ReactMarkdown>
+                                        </article>
+                                    )}
+                                </div>
+                            </details>
+
+                            <details className="bg-black/20 border border-border/30 rounded-2xl overflow-hidden group open:border-accent/30 transition-all">
+                                <summary className="p-4 font-bold text-text-primary hover:bg-white/5 transition-colors cursor-pointer flex justify-between items-center uppercase tracking-tighter text-sm">
+                                    CI/CD Pipeline (YAML)
+                                    <span className="text-accent group-open:rotate-90 transition-transform text-xl">▸</span>
+                                </summary>
+                                <div className="p-6 border-t border-border/30 bg-black/40">
+                                    {isGeneratingArtifacts ? <div className="animate-pulse text-text-tertiary">Sincronizando...</div> : (
+                                        <CodeBlock language="yaml">{ciCdContent || ''}</CodeBlock>
+                                    )}
+                                </div>
+                            </details>
+
+                            <details className="bg-black/20 border border-border/30 rounded-2xl overflow-hidden group open:border-highlight/30 transition-all">
+                                <summary className="p-4 font-bold text-text-primary hover:bg-white/5 transition-colors cursor-pointer flex justify-between items-center uppercase tracking-tighter text-sm">
+                                    Guía de Despliegue Rápido
+                                    <span className="text-highlight group-open:rotate-90 transition-transform text-xl">▸</span>
+                                </summary>
+                                <div className="p-6 border-t border-border/30 bg-black/40 space-y-4">
+                                    <div className="space-y-3">
+                                        <div className="text-[10px] font-black text-text-tertiary uppercase tracking-widest">Secuencia de Comandos</div>
+                                        <CommandBlock command={`cd ${projectName}`} />
+                                        <CommandBlock command="git init -b main" />
+                                        <CommandBlock command="git add . && git commit -m 'Initial sovereign commit'" />
+                                        <CommandBlock command="gh repo create --public --source=. --remote=origin" />
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex justify-center pt-8">
+                <button 
+                    onClick={onStartNew}
+                    className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-surface/20 border border-border/50 text-text-secondary hover:text-white hover:border-white/30 transition-all group"
                 >
-                    {isDownloading ? 'Generando .zip...' : isGeneratingArtifacts ? 'Generando archivos de proyecto...' : `Descargar Proyecto (.zip)`}
+                    <RefreshIcon className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
+                    <span className="font-bold uppercase tracking-widest text-sm">Iniciar Nueva Arquitectura</span>
                 </button>
-
-                <div className="flex items-center my-2">
-                    <div className="flex-grow border-t border-border/50"></div>
-                    <span className="flex-shrink mx-4 text-text-tertiary text-sm">PRÓXIMOS PASOS</span>
-                    <div className="flex-grow border-t border-border/50"></div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <button
-                        onClick={handleSendToDoctor}
-                        disabled={isGeneratingArtifacts}
-                        className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-info to-blue-700 text-white font-bold text-lg rounded-lg hover:from-info/80 hover:to-blue-800 transition-all transform hover:scale-105 duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-info/20"
-                    >
-                        <StethoscopeIcon className="w-6 h-6" />
-                        Revisar con Doctor
-                    </button>
-                    <button
-                        onClick={handleSendToDeployer}
-                        disabled={isGeneratingArtifacts}
-                        className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-600 to-teal-700 text-white font-bold text-lg rounded-lg hover:from-cyan-700 hover:to-teal-800 transition-all transform hover:scale-105 duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-cyan-600/20"
-                    >
-                        <DeployIcon className="w-6 h-6" />
-                        Preparar Despliegue
-                    </button>
-                </div>
-            </div>
-
-            {/* Additional Info Section (Accordion) */}
-            <div className="space-y-4 text-left">
-                {/* README Accordion */}
-                <details className="bg-surface/30 border border-border/50 rounded-xl overflow-hidden backdrop-blur-sm group">
-                    <summary className="p-4 font-semibold text-text-primary hover:bg-border/30 transition-colors cursor-pointer flex justify-between items-center">
-                        Vista Previa del README.md
-                        <span className="text-accent group-open:rotate-90 transition-transform text-2xl">▸</span>
-                    </summary>
-                    <div className="p-6 border-t border-border/50 bg-surface/50">
-                        {isGeneratingArtifacts && <div className="text-center p-8 text-text-secondary">Generando README.md...</div>}
-                        {!isGeneratingArtifacts && readmeContent && (
-                            <article className="prose prose-invert prose-pre:bg-background/80 max-w-none prose-h1:text-accent prose-a:text-primary">
-                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{readmeContent}</ReactMarkdown>
-                            </article>
-                        )}
-                    </div>
-                </details>
-
-                 {/* CI/CD Accordion */}
-                 <details className="bg-surface/30 border border-border/50 rounded-xl overflow-hidden backdrop-blur-sm group">
-                    <summary className="p-4 font-semibold text-text-primary hover:bg-border/30 transition-colors cursor-pointer flex justify-between items-center">
-                        <span className="flex items-center gap-2"><RefreshIcon className="w-5 h-5"/> Canalización de CI/CD</span>
-                        <span className="text-accent group-open:rotate-90 transition-transform text-2xl">▸</span>
-                    </summary>
-                    <div className="p-6 border-t border-border/50 bg-surface/50">
-                        {isGeneratingArtifacts && <div className="text-center p-8 text-text-secondary">Generando flujo de trabajo CI/CD...</div>}
-                        {!isGeneratingArtifacts && ciCdContent && (
-                           <CodeBlock language="yaml">{ciCdContent}</CodeBlock>
-                        )}
-                    </div>
-                </details>
-
-                {/* Deploy Accordion */}
-                <details className="bg-surface/30 border border-border/50 rounded-xl overflow-hidden backdrop-blur-sm group">
-                    <summary className="p-4 font-semibold text-text-primary hover:bg-border/30 transition-colors cursor-pointer flex justify-between items-center">
-                        Instrucciones de Despliegue
-                        <span className="text-accent group-open:rotate-90 transition-transform text-2xl">▸</span>
-                    </summary>
-                    <div className="p-6 border-t border-border/50 bg-surface/50 space-y-6">
-                        <div>
-                            <h3 className="font-semibold text-accent mb-2">Publicar en GitHub</h3>
-                            <p className="text-sm text-text-secondary mb-3">
-                                Sigue estos pasos en tu terminal para crear un repositorio en GitHub y subir tu código. Necesitas tener la <a href="https://cli.github.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">CLI de GitHub</a> instalada.
-                            </p>
-                        </div>
-                        <div className="space-y-4">
-                            <div>
-                                <h4 className="font-semibold text-text-primary text-sm mb-1">1. Navega a la carpeta de tu proyecto</h4>
-                                <CommandBlock command={`cd ${projectName}`} />
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-text-primary text-sm mb-1">2. Inicializa Git</h4>
-                                <CommandBlock command="git init -b main" />
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-text-primary text-sm mb-1">3. Añade y confirma los archivos</h4>
-                                <CommandBlock command="git add . && git commit -m 'Initial commit from Alphapp AI'" />
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-text-primary text-sm mb-1">4. Crea el repositorio y sube el código</h4>
-                                <CommandBlock command="gh repo create && git push -u origin main" />
-                            </div>
-                        </div>
-                    </div>
-                </details>
             </div>
         </div>
     );

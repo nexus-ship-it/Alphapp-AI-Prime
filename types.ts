@@ -56,7 +56,7 @@ export interface TechStack {
     devops: TechValue[];
 }
 
-export type AnalysisCategory = 'Seguridad' | 'Análisis de Dependencias' | 'Calidad' | 'Mejores Prácticas' | 'Optimización de Dependencias' | 'Infraestructura' | 'Licenciamiento' | 'Detección de Secretos';
+export type AnalysisCategory = 'Seguridad' | 'Análisis de Dependencias' | 'Calidad' | 'Mejores Prácticas' | 'Optimización de Dependencias' | 'Infraestructura' | 'Licenciamiento' | 'Detección de Secretos' | 'Refactorización';
 
 export interface AnalysisIssue {
     filePath: string;

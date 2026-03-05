@@ -118,6 +118,17 @@ export const modifyProjectArchitecture = async (currentFiles: {path: string, con
 const analysisSchema: Schema = {
     type: Type.OBJECT,
     properties: {
+        health_score: {
+            type: Type.OBJECT,
+            properties: {
+                overall: { type: Type.INTEGER },
+                security: { type: Type.INTEGER },
+                quality: { type: Type.INTEGER },
+                performance: { type: Type.INTEGER },
+                maintainability: { type: Type.INTEGER }
+            },
+            required: ["overall", "security", "quality", "performance", "maintainability"]
+        },
         security: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { filePath: { type: Type.STRING }, line: { type: Type.INTEGER }, severity: { type: Type.STRING }, title: { type: Type.STRING }, description: { type: Type.STRING }, suggestion: { type: Type.STRING } }, required: ["filePath", "line", "severity", "title", "description", "suggestion"] } },
         dependencies: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { filePath: { type: Type.STRING }, line: { type: Type.INTEGER }, severity: { type: Type.STRING }, title: { type: Type.STRING }, description: { type: Type.STRING }, suggestion: { type: Type.STRING } }, required: ["filePath", "line", "severity", "title", "description", "suggestion"] } },
         quality: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { filePath: { type: Type.STRING }, line: { type: Type.INTEGER }, severity: { type: Type.STRING }, title: { type: Type.STRING }, description: { type: Type.STRING }, suggestion: { type: Type.STRING } }, required: ["filePath", "line", "severity", "title", "description", "suggestion"] } },
@@ -127,11 +138,11 @@ const analysisSchema: Schema = {
         licenciamiento: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { filePath: { type: Type.STRING }, line: { type: Type.INTEGER }, severity: { type: Type.STRING }, title: { type: Type.STRING }, description: { type: Type.STRING }, suggestion: { type: Type.STRING } }, required: ["filePath", "line", "severity", "title", "description", "suggestion"] } },
         deteccion_de_secretos: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { filePath: { type: Type.STRING }, line: { type: Type.INTEGER }, severity: { type: Type.STRING }, title: { type: Type.STRING }, description: { type: Type.STRING }, suggestion: { type: Type.STRING } }, required: ["filePath", "line", "severity", "title", "description", "suggestion"] } },
     },
-    required: ["security", "dependencies", "quality", "best_practices", "dependency_optimization", "infraestructura", "licenciamiento", "deteccion_de_secretos"]
+    required: ["health_score", "security", "dependencies", "quality", "best_practices", "dependency_optimization", "infraestructura", "licenciamiento", "deteccion_de_secretos"]
 };
 
 export const generateFullCodeAnalysis = async (files: {path: string, content: string}[], techStack: TechStack): Promise<any> => {
-    const prompt = `Auditoría Clínica Senior: Analiza seguridad profunda, calidad, infraestructura y detección de secretos.
+    const prompt = `Auditoría Clínica Senior (Nivel Omni): Analiza seguridad profunda, calidad, infraestructura, detección de secretos y calcula una puntuación de salud (0-100).
     Stack: ${formatTechStack(techStack)}
     Archivos: ${JSON.stringify(files.slice(0, 20).map(f => ({path: f.path, content: f.content.substring(0, 2000)})))}`;
 
@@ -145,6 +156,23 @@ export const generateFullCodeAnalysis = async (files: {path: string, content: st
         }
     });
     return JSON.parse(response.text || '{}');
+};
+
+export const generateRefactoringSuggestions = async (files: {path: string, content: string}[], techStack: TechStack): Promise<any[]> => {
+    const prompt = `Actúa como un Arquitecto de Software Senior. Identifica oportunidades de refactorización para mejorar la legibilidad, mantenibilidad y rendimiento.
+    Stack: ${formatTechStack(techStack)}
+    Archivos: ${JSON.stringify(files.slice(0, 10).map(f => ({path: f.path, content: f.content.substring(0, 2000)})))}
+    Devuelve un array JSON de objetos {filePath, line, title, description, suggestion}.`;
+
+    const response = await safeGenerateContent({
+        model: 'gemini-3-pro-preview',
+        contents: [{ parts: [{ text: prompt }] }],
+        config: { 
+            responseMimeType: 'application/json',
+            thinkingConfig: { thinkingBudget: 16000 } 
+        }
+    });
+    return JSON.parse(response.text || '[]');
 };
 
 export const generateCodeFix = async (filePath: string, content: string, issue: AnalysisIssue): Promise<string> => {
@@ -308,6 +336,56 @@ export const createBlob = (data: Float32Array): any => {
     const int16 = new Int16Array(l);
     for (let i = 0; i < l; i++) { int16[i] = data[i] * 32768; }
     return { data: encode(new Uint8Array(int16.buffer)), mimeType: 'audio/pcm;rate=16000' };
+};
+
+export const generateSovereignAudit = async (files: {path: string, content: string}[], techStack: TechStack): Promise<any> => {
+    const prompt = `AUDITORÍA SOBERANA (NIVEL OMNI): Realiza un análisis exhaustivo de seguridad militar, optimización cuántica y resiliencia de infraestructura.
+    Stack: ${formatTechStack(techStack)}
+    Archivos: ${JSON.stringify(files.slice(0, 20).map(f => ({path: f.path, content: f.content.substring(0, 2000)})))}
+    Devuelve un JSON con categorías: 'seguridad_extrema', 'optimizacion_critica', 'resiliencia_infra'.`;
+
+    const response = await safeGenerateContent({
+        model: 'gemini-3-pro-preview',
+        contents: [{ parts: [{ text: prompt }] }],
+        config: { 
+            responseMimeType: 'application/json',
+            thinkingConfig: { thinkingBudget: 32000 } 
+        }
+    });
+    return JSON.parse(response.text || '{}');
+};
+
+export const generateIaCConfig = async (projectDesc: string, techStack: TechStack): Promise<{path: string, content: string}[]> => {
+    const prompt = `Genera archivos de Infraestructura como Código (IaC) para el proyecto.
+    Descripción: ${projectDesc}
+    Stack: ${formatTechStack(techStack)}
+    Incluye: Docker Compose, Kubernetes manifests (si aplica), y Terraform para AWS/GCP.
+    Devuelve un array JSON de objetos {path, content}.`;
+
+    const response = await safeGenerateContent({
+        model: 'gemini-3-pro-preview',
+        contents: [{ parts: [{ text: prompt }] }],
+        config: { 
+            responseMimeType: 'application/json',
+            thinkingConfig: { thinkingBudget: 16000 } 
+        }
+    });
+    return JSON.parse(response.text || '[]');
+};
+
+export const generateDocumentation = async (projectDesc: string, techStack: TechStack, files: {path: string, content: string}[]): Promise<string> => {
+    const prompt = `Genera una documentación técnica exhaustiva (Wiki) para el sistema.
+    Descripción: ${projectDesc}
+    Stack: ${formatTechStack(techStack)}
+    Archivos: ${files.map(f => f.path).join(', ')}
+    Usa Markdown profesional con diagramas Mermaid (si es posible).`;
+
+    const response = await safeGenerateContent({
+        model: 'gemini-3-pro-preview',
+        contents: [{ parts: [{ text: prompt }] }],
+        config: { thinkingConfig: { thinkingBudget: 16000 } }
+    });
+    return response.text || '';
 };
 
 export const generateReadme = async (desc: string, stack: TechStack, files: any[]) => {
