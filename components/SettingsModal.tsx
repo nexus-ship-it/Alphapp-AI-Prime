@@ -141,6 +141,7 @@ const AppearancePanel: React.FC = () => {
         { id: 'midnight', label: 'appearance.midnight' },
         { id: 'dusk', label: 'appearance.dusk' },
         { id: 'solarized', label: 'appearance.solarized' },
+        { id: 'sovereign', label: 'appearance.sovereign' },
     ];
 
     return (
@@ -195,6 +196,11 @@ const AppearancePanel: React.FC = () => {
                 .preview-solarized .bg-background\\/50 { background-color: #eee8d580; }
                 .preview-solarized .bg-primary { background-color: rgb(38 139 210); }
                 .preview-solarized .bg-accent { background-color: rgb(211 54 130); }
+
+                .preview-sovereign { background-color: #020617; border: 1px solid #1e293b; }
+                .preview-sovereign .bg-background\\/50 { background-color: #0f172a80; }
+                .preview-sovereign .bg-primary { background-color: rgb(16 185 129); }
+                .preview-sovereign .bg-accent { background-color: rgb(245 158 11); }
             `}</style>
         </div>
     );

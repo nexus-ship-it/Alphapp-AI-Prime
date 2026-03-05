@@ -658,7 +658,7 @@ const UIMagicianFlow: React.FC<{ onSendToDoctor: (result: UIMagicianResult) => v
                         <button onClick={startCamera} className="px-6 py-3 bg-surface text-text-primary font-semibold rounded-lg hover:bg-border/50 transition-colors flex items-center gap-2">
                             <CameraIcon className="w-5 h-5" /> {t('common.useCamera' as TranslationKey)}
                         </button>
-                    </>
+                    </div>
                 )}
             </div>
             <input type="file" accept="image/*" ref={fileInputRef} onChange={(e) => handleFileSelect(e.target.files)} className="hidden" />
