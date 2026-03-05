@@ -49,9 +49,12 @@ const WelcomeScreen: React.FC<{
     const { t } = useI18n();
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center animate-fade-in relative">
+        <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center animate-fade-in relative overflow-hidden">
+            {/* Sovereign Grid Background */}
+            <div className="absolute inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(to right, rgba(var(--color-primary), 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(var(--color-primary), 0.1) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(var(--color-background),1)_80%)]"></div>
 
-            <div className="absolute top-4 right-4 flex items-center gap-4">
+            <div className="absolute top-4 right-4 flex items-center gap-4 z-10">
                 {currentUser ? (
                     <>
                         <div className="flex items-center gap-2 text-text-primary">
@@ -87,8 +90,12 @@ const WelcomeScreen: React.FC<{
                     <path d="M50 5L5 95H28.5L50 48.5L71.5 95H95L50 5z M50 58.5L36.5 87.5H63.5L50 58.5z" />
                 </svg>
                 <h1 className="text-5xl sm:text-6xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-gray-200 to-primary drop-shadow-text-glow-primary">
-                    Alphapp AI
+                    Alphapp AI Prime
                 </h1>
+            </div>
+
+            <div className="inline-block px-4 py-1 mb-8 rounded-full bg-primary/10 border border-primary/30 text-primary text-sm font-bold tracking-widest uppercase shadow-glow-primary animate-pulse-fast">
+                Sistema Soberano Activado
             </div>
 
             <p className="mt-2 mb-12 text-lg sm:text-xl text-text-secondary max-w-3xl leading-relaxed">

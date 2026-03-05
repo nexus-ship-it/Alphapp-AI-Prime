@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
 
-export type Theme = 'dark' | 'light' | 'midnight' | 'dusk' | 'solarized';
+export type Theme = 'dark' | 'light' | 'midnight' | 'dusk' | 'solarized' | 'sovereign';
 
 interface ThemeContextType {
     theme: Theme;
@@ -24,7 +24,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     useEffect(() => {
         const root = window.document.documentElement;
         
-        root.classList.remove('dark', 'light', 'midnight', 'dusk', 'solarized');
+        root.classList.remove('dark', 'light', 'midnight', 'dusk', 'solarized', 'sovereign');
         root.classList.add(theme);
 
         try {

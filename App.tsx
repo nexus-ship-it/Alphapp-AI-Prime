@@ -121,7 +121,7 @@ const SidebarNav: React.FC<{
     return (
         <aside className={`relative bg-surface/30 border-r border-border/50 p-4 flex flex-col h-full backdrop-blur-sm transition-all duration-300 ${isSidebarVisible ? 'w-72' : 'w-20'}`}>
             <button onClick={onToggleSidebar} className="absolute top-1/2 -right-3 z-10 p-1 rounded-full bg-surface border border-border text-text-secondary hover:text-white transition-all -translate-y-1/2"><ChevronLeftIcon className={`w-4 h-4 transition-transform ${isSidebarVisible ? '' : 'rotate-180'}`} /></button>
-            <div className={`flex items-center space-x-3 mb-8 cursor-pointer group flex-shrink-0 ${isSidebarVisible ? '' : 'justify-center'}`} onClick={onReset}><svg className="w-8 h-8 text-primary drop-shadow-text-glow-primary" viewBox="0 0 100 100" fill="currentColor"><path d="M50 5L5 95H28.5L50 48.5L71.5 95H95L50 5z M50 58.5L36.5 87.5H63.5L50 58.5z" /></svg><h1 className={`text-xl font-bold text-text-primary group-hover:text-white transition-opacity ${isSidebarVisible ? 'opacity-100' : 'opacity-0 w-0'}`}>Alphapp AI</h1></div>
+            <div className={`flex items-center space-x-3 mb-8 cursor-pointer group flex-shrink-0 ${isSidebarVisible ? '' : 'justify-center'}`} onClick={onReset}><svg className="w-8 h-8 text-primary drop-shadow-text-glow-primary" viewBox="0 0 100 100" fill="currentColor"><path d="M50 5L5 95H28.5L50 48.5L71.5 95H95L50 5z M50 58.5L36.5 87.5H63.5L50 58.5z" /></svg><h1 className={`text-xl font-bold text-text-primary group-hover:text-white transition-opacity ${isSidebarVisible ? 'opacity-100' : 'opacity-0 w-0'}`}>Alphapp AI Prime</h1></div>
             
             <div className="space-y-2 mb-6">
                 <button 
@@ -158,6 +158,18 @@ const SidebarNav: React.FC<{
                 ))}
             </nav>
             <div className="pt-4 border-t border-border/50">
+                {/* Sovereign System Status */}
+                <div className={`mb-4 px-3 py-2 rounded-lg bg-black/20 border border-primary/20 flex items-center gap-3 ${!isSidebarVisible ? 'justify-center' : ''}`}>
+                    <div className="relative flex h-3 w-3 flex-shrink-0">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                    </div>
+                    <div className={`flex flex-col ${isSidebarVisible ? 'opacity-100' : 'opacity-0 w-0 hidden'}`}>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">Núcleo Soberano</span>
+                        <span className="text-[9px] text-text-tertiary font-mono">Online • Latencia: 12ms</span>
+                    </div>
+                </div>
+
                 {currentUser ? (
                     <div className="flex items-center justify-between p-2"><div className={`flex items-center gap-2 ${!isSidebarVisible && 'w-full justify-center'}`}><div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center font-bold text-white">{currentUser.username.charAt(0).toUpperCase()}</div><span className={`${isSidebarVisible ? 'opacity-100' : 'opacity-0 w-0'} font-semibold truncate`}>{currentUser.username}</span></div></div>
                 ) : (
