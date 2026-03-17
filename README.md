@@ -34,7 +34,7 @@ Para desplegar la instancia de **Alphapp AI Prime**, clona este repositorio y co
 
 ```bash
 # Clonar el repositorio central
-git clone https://github.com/alphapp/Alphapp-AI-Prime.git
+git clone https://github.com/alphapx/Alphapp-AI-Prime.git
 
 # Entrar al directorio
 cd Alphapp-AI-Prime
